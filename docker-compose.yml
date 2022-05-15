@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  java-workspace:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    tty: true
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+  postgres:
+    image: postgres:latest
+    platform: linux/x86_64
+    restart: always
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      PGPASSWORD: app
+      POSTGRES_DB: app
+      TZ: "Asia/Tokyo"
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+volumes:
+  postgres:
