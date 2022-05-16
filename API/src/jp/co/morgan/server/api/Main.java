@@ -1,10 +1,13 @@
-package co.jp.morgan.server.app;
+package jp.co.morgan.server.api;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import jp.co.morgan.server.util.PropertyUtil;
+
 
 
 public class Main {
@@ -13,9 +16,9 @@ public class Main {
         Statement stmt = null;
         ResultSet ret = null;
 
-        String url = "jdbc:postgresql://postgres:5432/app";
-        String user = "app";
-        String password = "app";
+        String url = PropertyUtil.getProperty("db.url");
+        String user = PropertyUtil.getProperty("db.user");;
+        String password = PropertyUtil.getProperty("db.password");;
 
         try {
             conn = DriverManager.getConnection(url, user, password);
@@ -45,7 +48,6 @@ public class Main {
             catch (SQLException e){
                 e.printStackTrace();
             }
-
         }
     }
 }
