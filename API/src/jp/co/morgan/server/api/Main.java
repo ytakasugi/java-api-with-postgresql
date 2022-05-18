@@ -1,12 +1,11 @@
 package jp.co.morgan.server.api;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import jp.co.morgan.server.util.PropertyUtil;
+import jp.co.morgan.server.util.Util;
 
 
 
@@ -16,16 +15,10 @@ public class Main {
         Statement stmt = null;
         ResultSet ret = null;
 
-        String url = PropertyUtil.getProperty("db.url");
-        String user = PropertyUtil.getProperty("db.user");;
-        String password = PropertyUtil.getProperty("db.password");;
-
         try {
-            conn = DriverManager.getConnection(url, user, password);
-            conn.setAutoCommit(false);
-
+            conn = Util.getConnection();
             stmt = conn.createStatement();
-            String sql = "SELECT * FROM USERS;";
+            String sql = "SELECT * FROM USERS";
             ret = stmt.executeQuery(sql);
 
             //SELECT結果の受け取り
@@ -45,7 +38,7 @@ public class Main {
                 if(stmt != null)stmt.close();
                 if(conn != null)conn.close();
             }
-            catch (SQLException e){
+            catch (SQLException e) {
                 e.printStackTrace();
             }
         }

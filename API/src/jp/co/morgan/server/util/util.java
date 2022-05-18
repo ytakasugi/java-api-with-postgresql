@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 public class util {
     public static void main(String[] args) {
-        System.out.println(PropertyUtil.getProperty("db.url"));
+        System.out.println(Util.getProperty("db.url"));
         
         String filename = "common.properties";
         Path pathToFile = Paths.get(filename);

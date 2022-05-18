@@ -1,17 +1,21 @@
 package jp.co.morgan.server.util;
 
-import java.io.IOException;
 import java.util.Properties;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PropertyUtil {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class Util {
 
     private static final String INIT_FILE_PATH = "/workspace/common.properties";
     private static final Properties properties;
 
-    private PropertyUtil() throws Exception {
+    private Util() throws Exception {
     }
 
     static {
@@ -45,5 +49,22 @@ public class PropertyUtil {
      */
     public static String getProperty(final String key, final String defaultValue) {
         return properties.getProperty(key, defaultValue);
+    }
+    /**
+     * DB接続をする
+     */
+    public static Connection getConnection() {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(
+                getProperty("db.url"), 
+                getProperty("db.user"),
+                getProperty("db.password")
+            );
+            conn.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return conn;
     }
 }
