@@ -9,11 +9,15 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 
 public class Util {
 
     private static final String INIT_FILE_PATH = "/workspace/common.properties";
     private static final Properties properties;
+    private Connection conn;
+
 
     private Util() throws Exception {
     }
@@ -50,10 +54,11 @@ public class Util {
     public static String getProperty(final String key, final String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
+
     /**
      * DB接続をする
      */
-    public static Connection getConnection() {
+    public static Connection connection() {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(
@@ -66,5 +71,67 @@ public class Util {
             e.printStackTrace();
         }
         return conn;
+    }
+
+    /**
+     * ロールバックを行う
+     */
+    public void rollback() {
+        try {
+            this.conn.rollback();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * コミットを行う
+     */
+    public void commit() {
+        try {
+            this.conn.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * PreparedStatementのクローズする
+     * @param target
+     */
+    public static void closeStatement(PreparedStatement target) {
+        if (null != target) {
+            try {
+                target.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * ResultSetのクローズする
+     */
+    public static void closeResultSet(ResultSet target) {
+        if (null != target) {
+            try {
+                target.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Connectionのクローズを行う
+     */
+    public static void closeConnection(Connection target) {
+        if (null != target) {
+            try {
+                target.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
