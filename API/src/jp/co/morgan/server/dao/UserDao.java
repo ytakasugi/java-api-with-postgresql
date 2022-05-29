@@ -19,7 +19,7 @@ public class UserDao {
         // 結果格納用配列の作成
         ArrayList<UserDto> userList = new ArrayList<UserDto>(); 
         // SQL文作成
-        String sql = "SELECT * FROM USERS";
+        String sql = Util.getSql("getAllUser");
         
         try {
             // DB接続

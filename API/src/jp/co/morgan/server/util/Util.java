@@ -1,10 +1,9 @@
 package jp.co.morgan.server.util;
 
 import java.util.Properties;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,45 +13,45 @@ import java.sql.PreparedStatement;
 
 public class Util {
 
-    private static final String INIT_FILE_PATH = "/workspace/common.properties";
-    private static final Properties properties;
-    private Connection conn;
+    private static final String COMMON_PROP_PATH = "/workspace/common.properties";
+    private static final String SQL_PROP_PATH = "/workspace/sql.properties";
 
-
-    private Util() throws Exception {
+    /**
+     * コンストラクタ
+     */
+    private Util() {
     }
 
-    static {
-        properties = new Properties();
+    /**
+     * SQLプロパティを読み込み、keyと一致する値(SQL)を取得する
+     * @param key
+     * @return
+     */
+    public static String getSql(String key) {
+        Properties prop = new Properties();
         try {
-            properties.load(Files.newBufferedReader(Paths.get(INIT_FILE_PATH), StandardCharsets.UTF_8));
-        } catch (IOException e) {
+            InputStream is = new FileInputStream(SQL_PROP_PATH);
+            prop.load(is);
+        } catch(IOException e) {
             e.printStackTrace();
-            // ファイル読み込みに失敗
-            System.out.println(String.format("ファイルの読み込みに失敗しました。ファイル名:%s", INIT_FILE_PATH));
         }
+        return prop.getProperty(key);
     }
 
     /**
-     * プロパティ値を取得する
-     *
-     * @param key キー
-     * @return 値
+     * 共通プロパティを読み込み、keyと一致する値を取得する
+     * @param key
+     * @return
      */
-    public static String getProperty(final String key) {
-        return getProperty(key, "");
-    }
-
-    /**
-     * プロパティ値を取得する
-     *
-     * @param key キー
-     * @param defaultValue デフォルト値
-     * @return キーが存在しない場合、デフォルト値
-     *          存在する場合、値
-     */
-    public static String getProperty(final String key, final String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+    public static String getProp(String key) {
+        Properties prop = new Properties();
+        try {
+            InputStream is = new FileInputStream(COMMON_PROP_PATH);
+            prop.load(is);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return prop.getProperty(key);
     }
 
     /**
@@ -62,37 +61,15 @@ public class Util {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(
-                getProperty("db.url"), 
-                getProperty("db.user"),
-                getProperty("db.password")
+                getProp("db.url"), 
+                getProp("db.user"),
+                getProp("db.password")
             );
             conn.setAutoCommit(false);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return conn;
-    }
-
-    /**
-     * ロールバックを行う
-     */
-    public void rollback() {
-        try {
-            this.conn.rollback();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * コミットを行う
-     */
-    public void commit() {
-        try {
-            this.conn.commit();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
