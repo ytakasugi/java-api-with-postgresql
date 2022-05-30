@@ -4,141 +4,51 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+/**
+ * DB関係のクラスメソッドを定義する
+ */
 public class TransactionManager {
-    private static TransactionManager transaction;
-    private Connection conn;
+    private static final ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<Connection>();
+    //private static final ThreadLocal<PreparedStatement> threadLocalStatement = new ThreadLocal<PreparedStatement>();
+    //private static final ThreadLocal<ResultSet> threadLocalResultSet = new ThreadLocal<ResultSet>();
 
     /**
      * コンストラクタ
      */
-    private TransactionManager(Connection conn) {
-        this.conn = conn;
-    }
-    /**
-     * コネクションを取得する
-     * @return コネクション
-     */
-    public Connection getConnection() {
-        return this.conn;
+    private TransactionManager() {
     }
 
-    public static TransactionManager begin() {
+    /**
+     * コネクションを作成する
+     */
+    public static Connection getConnection() {
+        Connection conn = null;
         try {
-            if (null == transaction) {
-                Connection conn = DriverManager.getConnection(
-                    Util.getProp("db.url"), 
-                    Util.getProp("db.user"),
-                    Util.getProp("db.password")
-                );
+            conn = DriverManager.getConnection(
+                Util.getProp("db.url"), 
+                Util.getProp("db.user"),
+                Util.getProp("db.password")
+            );
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
+    /**
+     * トランザクションを開始する
+     */
+    public static void begin() {
+        // コネクションを取得する
+        Connection conn = threadLocalConnection.get();
+        try {
+            if (conn != null) {
                 conn.setAutoCommit(false);
-                transaction = new TransactionManager(conn);
             }
-            return transaction;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * SQLを実行する。
-     * @param sql　実行するSQL
-     * @param params 設定するパラメーター
-     * @return　実行結果
-     */
-    public int executeUpdate(String sql, List<Object> params) {
-        PreparedStatement ps = null;
-        try {
-            ps = this.makePreparedStatement(sql, params);
-            return ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(sql, e);
-        } finally {
-            TransactionManager.closeStatement(ps);
-        }
-    }
-    
-    /**
-     * PreparedStatementを作成する
-     * @param sql 実行するSQL文
-     * @param params 設定するパラメーター
-     * @return 作成されたPreparedStatement
-     * @throws SQLException
-     */
-    PreparedStatement makePreparedStatement(String sql, List<Object> params) throws SQLException {
-        PreparedStatement ps = this.conn.prepareStatement(sql);
-        if (null == params) {
-            return ps;
-        }
-        int index = 1;
-        for (Object param : params) {
-            ps.setObject(index, param);
-            index = index + 1;
-        }
-        return ps;
-    }
-
-    /**
-     * SQLの実行結果をマップのリストで取得する
-     * @param sql 実行するSQL
-     * @param paramList　設定するパラメーター
-     * @return　実行結果
-     */
-    public List<Map<String, Object>> executeQuery(String sql, List<Object> paramList) {
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-        try {
-            ps = this.makePreparedStatement(sql, paramList);
-            rs = ps.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int count = rsmd.getColumnCount();
-            List<String> columnList = new ArrayList<String>();
-            for (int i = 0; i < count; i++) {
-                columnList.add(rsmd.getColumnName(i + 1));
-            }
-            while (rs.next()) {
-                Map<String, Object> row = new HashMap<String, Object>();
-                result.add(row);
-                for (int i = 0; i < columnList.size(); i++) {
-                    String key = (String)columnList.get(i);
-                    row.put(key, rs.getObject(key));
-                }
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            TransactionManager.closeResultSet(rs);
-            TransactionManager.closeStatement(ps);
-        }
-    }
-
-    /**
-     * ロールバックを行う
-     */
-    public void rollback() {
-        try {
-            this.conn.rollback();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * コミットを行う
-     */
-    public void commit() {
-        try {
-            this.conn.commit();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -146,16 +56,42 @@ public class TransactionManager {
      * トランザクションを終了する
      */
     public static void end() {
-        if (null != transaction) {
-            transaction.close();
+        // コネクションを取得する
+        Connection conn = threadLocalConnection.get();
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    void close() {
+    /**
+     * コミット
+     */
+    public static void commit() {
+        Connection conn = threadLocalConnection.get();
         try {
-            this.conn.close();
+            if (conn != null) {
+                conn.commit();
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ロールバック
+     */
+    public static void rollback() {
+        Connection conn = threadLocalConnection.get();
+        try {
+            if (conn != null) {
+                conn.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -164,7 +100,7 @@ public class TransactionManager {
      * @param target
      */
     public static void closeStatement(PreparedStatement target) {
-        if (null != target) {
+        if (target != null) {
             try {
                 target.close();
             } catch (SQLException e) {
@@ -175,25 +111,15 @@ public class TransactionManager {
 
     /**
      * ResultSetのクローズする
+     * @param target
      */
     public static void closeResultSet(ResultSet target) {
-        if (null != target) {
+        if (target != null) {
             try {
                 target.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * コネクションのクローズを行う
-     */
-    public void closeConnection() {
-        try {
-            this.conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }

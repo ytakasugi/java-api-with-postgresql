@@ -11,18 +11,20 @@ public class Main {
         try {
             UserDao userDao = new UserDao();
             userList = userDao.getAllUserInfo();
-            display();
+            UserInfoListDisplay();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    public static void display() {
+    public static void UserInfoListDisplay() {
         for (int i = 0; i < userList.size(); i++) {
             UserDto userDto = userList.get(i);
-            System.out.println("USER_ID: " + userDto.getUserId());
-            System.out.println("USER_NAME :" + userDto.getUserName());
-            System.out.println("E-mail :" + userDto.getEMail());
+            System.out.printf(
+                "%s, %s, %s \n", 
+                userDto.getUserId(), 
+                userDto.getUserName(), 
+                userDto.getEMail()
+            );
         }
     }
 }
