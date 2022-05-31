@@ -19,7 +19,7 @@ public class ThreadLocalConnection {
      * コネクションを作成する
      * @return Connection
      */
-    public static Connection getConnection() {
+    private static Connection getConnection() {
         Connection conn = null;
         try {
             Class.forName(Util.getProp("db.driver"));

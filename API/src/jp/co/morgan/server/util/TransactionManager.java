@@ -31,6 +31,16 @@ public class TransactionManager {
     }
 
     /**
+     * トランザクションを取得する
+     * @return Connection
+     */
+    public static Connection get() {
+        // 自動コミットがTrueかどうか確認する
+        ThreadLocalConnection.set();
+        return ThreadLocalConnection.get();
+    }
+
+    /**
      * トランザクションを終了する
      */
     public static void end() {

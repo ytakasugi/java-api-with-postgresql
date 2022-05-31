@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 
 import jp.co.morgan.server.dto.UserDto;
 import jp.co.morgan.server.util.Util;
-import jp.co.morgan.server.util.ThreadLocalConnection;
 import jp.co.morgan.server.util.TransactionManager;
 
 public class UserDao {
@@ -25,10 +24,10 @@ public class UserDao {
         try {
             // コネクションを取得し、APIトランザクションを開始する
             TransactionManager.begin();
-            ThreadLocalConnection.set();
 
-            stmt = ThreadLocalConnection.get().prepareStatement(sql);
+            stmt = TransactionManager.get().prepareStatement(sql);
             ret = stmt.executeQuery();
+            
 
             while(ret.next()) {
                 UserDto user = new UserDto();
@@ -55,7 +54,7 @@ public class UserDao {
 
         try {
             TransactionManager.begin();
-            stmt = ThreadLocalConnection.get().prepareStatement(sql);
+            stmt = TransactionManager.get().prepareStatement(sql);
 
             for (int i = 0; i < 50; i++) {
                 stmt.setString(1, "test" + i);
