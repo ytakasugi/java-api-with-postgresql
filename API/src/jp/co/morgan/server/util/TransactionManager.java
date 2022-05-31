@@ -1,7 +1,6 @@
 package jp.co.morgan.server.util;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,10 +9,6 @@ import java.sql.SQLException;
  * DB関係のクラスメソッドを定義する
  */
 public class TransactionManager {
-    private static final ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<Connection>();
-    //private static final ThreadLocal<PreparedStatement> threadLocalStatement = new ThreadLocal<PreparedStatement>();
-    //private static final ThreadLocal<ResultSet> threadLocalResultSet = new ThreadLocal<ResultSet>();
-
     /**
      * コンストラクタ
      */
@@ -21,28 +16,11 @@ public class TransactionManager {
     }
 
     /**
-     * コネクションを作成する
-     */
-    public static Connection getConnection() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(
-                Util.getProp("db.url"), 
-                Util.getProp("db.user"),
-                Util.getProp("db.password")
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return conn;
-    }
-
-    /**
      * トランザクションを開始する
      */
     public static void begin() {
         // コネクションを取得する
-        Connection conn = threadLocalConnection.get();
+        Connection conn = ThreadLocalConnection.get();
         try {
             if (conn != null) {
                 conn.setAutoCommit(false);
@@ -57,7 +35,7 @@ public class TransactionManager {
      */
     public static void end() {
         // コネクションを取得する
-        Connection conn = threadLocalConnection.get();
+        Connection conn = ThreadLocalConnection.get();
         try {
             if (conn != null) {
                 conn.close();
@@ -71,7 +49,7 @@ public class TransactionManager {
      * コミット
      */
     public static void commit() {
-        Connection conn = threadLocalConnection.get();
+        Connection conn = ThreadLocalConnection.get();
         try {
             if (conn != null) {
                 conn.commit();
@@ -85,7 +63,7 @@ public class TransactionManager {
      * ロールバック
      */
     public static void rollback() {
-        Connection conn = threadLocalConnection.get();
+        Connection conn = ThreadLocalConnection.get();
         try {
             if (conn != null) {
                 conn.rollback();
