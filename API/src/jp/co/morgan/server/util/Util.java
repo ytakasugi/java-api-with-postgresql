@@ -4,8 +4,6 @@ import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class Util {
 
@@ -17,22 +15,7 @@ public class Util {
      */
     private Util() {
     }
-
-    public static void init() {
-        try {
-            Class.forName(Util.getProp("db.driver"));
-            DriverManager.getConnection(
-                Util.getProp("db.url"), 
-                Util.getProp("db.user"),
-                Util.getProp("db.password")
-            );
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } 
-    }
-
+    
     /**
      * SQLプロパティを読み込み、keyと一致する値(SQL)を取得する
      * @param key

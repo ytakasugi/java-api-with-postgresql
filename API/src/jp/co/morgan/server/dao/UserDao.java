@@ -2,7 +2,6 @@ package jp.co.morgan.server.dao;
 
 import java.util.ArrayList;
 
-//import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
@@ -15,7 +14,6 @@ import jp.co.morgan.server.util.TransactionManager;
 public class UserDao {
     // 全ユーザーを取得するメソッド
     public ArrayList<UserDto> getAllUserInfo() {
-        Util.init();
 
         PreparedStatement stmt = null;
         ResultSet ret = null;
@@ -50,15 +48,20 @@ public class UserDao {
         return userList;
     }
 
-    public static void registUser() {
-        Util.init();
+    public static void registNewUser() {
         PreparedStatement stmt = null;
 
-        String sql = "INSERT INTO USERS(USER_NAME, E_MAIL) VALUES('test01', 'test01@example.com')";
+        String sql = Util.getSql("insertNewUser");
+
         try {
             TransactionManager.begin();
             stmt = ThreadLocalConnection.get().prepareStatement(sql);
-            stmt.executeUpdate();
+
+            for (int i = 0; i < 50; i++) {
+                stmt.setString(1, "test" + i);
+                stmt.setString(2, "test" + i + "@example.com");
+                stmt.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
