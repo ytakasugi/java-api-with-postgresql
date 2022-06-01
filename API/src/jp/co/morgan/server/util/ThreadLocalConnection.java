@@ -16,6 +16,13 @@ public class ThreadLocalConnection {
     };
 
     /**
+     * コンストラクタ
+     */
+    private ThreadLocalConnection() {
+
+    }
+
+    /**
      * コネクションを作成する
      * @return Connection
      */

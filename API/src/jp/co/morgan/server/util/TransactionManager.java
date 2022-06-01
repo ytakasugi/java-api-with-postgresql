@@ -35,8 +35,6 @@ public class TransactionManager {
      * @return Connection
      */
     public static Connection get() {
-        // 自動コミットがTrueかどうか確認する
-        ThreadLocalConnection.set();
         return ThreadLocalConnection.get();
     }
 
@@ -48,9 +46,9 @@ public class TransactionManager {
         Connection conn = ThreadLocalConnection.get();
         try {
             if (conn != null) {
-                conn.close();
+                closeConnection(conn);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -80,6 +78,20 @@ public class TransactionManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Connectionをクローズする
+     * @param target
+     */
+    private static void closeConnection(Connection target) {
+        if (target != null) {
+            try {
+                target.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

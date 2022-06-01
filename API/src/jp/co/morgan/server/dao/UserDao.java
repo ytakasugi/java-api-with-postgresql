@@ -1,6 +1,7 @@
 package jp.co.morgan.server.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -52,19 +53,34 @@ public class UserDao {
 
         String sql = Util.getSql("insertNewUser");
 
+        UserDto newUser = new UserDto();
+        List<UserDto> newUserList = new ArrayList<UserDto>(); 
+        
+        for (int i = 0; i < 50; i++) {
+            newUser.setUserName("test" + i);
+            newUser.setEMail("test" + i + "@example.com");
+
+            newUserList.add(newUser);
+        }
+
         try {
             TransactionManager.begin();
             stmt = TransactionManager.get().prepareStatement(sql);
 
-            for (int i = 0; i < 50; i++) {
-                stmt.setString(1, "test" + i);
-                stmt.setString(2, "test" + i + "@example.com");
+            int size = newUserList.size();
+
+            for (int i = 0; i < size; i++) {
+                UserDto getUser = newUserList.get(i);
+                stmt.setString(1, getUser.getUserName());
+                stmt.setString(2, getUser.getEMail());
                 stmt.executeUpdate();
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             TransactionManager.commit();
+            TransactionManager.closeStatement(stmt);
             TransactionManager.end();
         }
     }
