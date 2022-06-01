@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import jp.co.morgan.server.dto.UserDto;
 import jp.co.morgan.server.dao.UserDao;
 
-public class Main {
+public class searchUserMain {
     private static ArrayList<UserDto> userList = null;
     public static void main(String[] args) {
         try {
