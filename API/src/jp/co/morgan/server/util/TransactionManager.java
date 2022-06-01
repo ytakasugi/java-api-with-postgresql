@@ -21,12 +21,12 @@ public class TransactionManager {
     public static void begin() {
         // コネクションを取得する
         Connection conn = ThreadLocalConnection.get();
-        try {
-            if (conn != null) {
+        if (conn != null) {
+            try {
                 conn.setAutoCommit(false);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -44,12 +44,12 @@ public class TransactionManager {
     public static void end() {
         // コネクションを取得する
         Connection conn = ThreadLocalConnection.get();
-        try {
-            if (conn != null) {
+        if (conn != null) {
+            try {
                 closeConnection(conn);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -58,12 +58,12 @@ public class TransactionManager {
      */
     public static void commit() {
         Connection conn = ThreadLocalConnection.get();
-        try {
-            if (conn != null) {
+        if (conn != null) {
+            try {
                 conn.commit();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -72,12 +72,12 @@ public class TransactionManager {
      */
     public static void rollback() {
         Connection conn = ThreadLocalConnection.get();
-        try {
-            if (conn != null) {
+        if (conn != null) {
+            try {
                 conn.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 

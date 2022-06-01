@@ -1,7 +1,7 @@
 package jp.co.morgan.server.dao;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -14,7 +14,6 @@ import jp.co.morgan.server.util.TransactionManager;
 public class UserDao {
     // 全ユーザーを取得するメソッド
     public ArrayList<UserDto> getAllUserInfo() {
-
         PreparedStatement stmt = null;
         ResultSet ret = null;
         // 結果格納用配列の作成
@@ -25,7 +24,6 @@ public class UserDao {
         try {
             // コネクションを取得し、APIトランザクションを開始する
             TransactionManager.begin();
-
             stmt = TransactionManager.get().prepareStatement(sql);
             ret = stmt.executeQuery();
             
@@ -48,9 +46,9 @@ public class UserDao {
         return userList;
     }
 
-    public static void registNewUser() {
+    public int registNewUser() {
         PreparedStatement stmt = null;
-
+        int RowsCount = 0;
         String sql = Util.getSql("insertNewUser");
 
         UserDto newUser = new UserDto();
@@ -74,6 +72,9 @@ public class UserDao {
                 stmt.setString(1, getUser.getUserName());
                 stmt.setString(2, getUser.getEMail());
                 stmt.executeUpdate();
+
+                // 行カウントをインクリメント
+                RowsCount = RowsCount + 1;
             }
 
         } catch (SQLException e) {
@@ -83,5 +84,7 @@ public class UserDao {
             TransactionManager.closeStatement(stmt);
             TransactionManager.end();
         }
+        System.out.println(RowsCount + "行作成しました.");
+        return RowsCount;
     }
 }
