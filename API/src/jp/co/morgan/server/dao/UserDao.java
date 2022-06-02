@@ -22,8 +22,6 @@ public class UserDao {
         String sql = Util.getSql("getAllUser");
         
         try {
-            // コネクションを取得し、APIトランザクションを開始する
-            TransactionManager.begin();
             stmt = TransactionManager.get().prepareStatement(sql);
             ret = stmt.executeQuery();
             
@@ -40,8 +38,6 @@ public class UserDao {
         } finally {
             TransactionManager.closeResultSet(ret);
             TransactionManager.closeStatement(stmt);
-            // コネクションを取得し、APIトランザクションを終了する(=コネクションを解放)
-            TransactionManager.end();
         }
         return userList;
     }
@@ -54,7 +50,7 @@ public class UserDao {
         UserDto newUser = new UserDto();
         List<UserDto> newUserList = new ArrayList<UserDto>(); 
         
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; i++) {            
             newUser.setUserName("test" + i);
             newUser.setEMail("test" + i + "@example.com");
 
@@ -62,7 +58,6 @@ public class UserDao {
         }
 
         try {
-            TransactionManager.begin();
             stmt = TransactionManager.get().prepareStatement(sql);
 
             int size = newUserList.size();
@@ -82,7 +77,6 @@ public class UserDao {
         } finally {
             TransactionManager.commit();
             TransactionManager.closeStatement(stmt);
-            TransactionManager.end();
         }
         System.out.println(RowsCount + "行作成しました.");
         return RowsCount;
