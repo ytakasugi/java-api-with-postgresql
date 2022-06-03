@@ -42,30 +42,20 @@ public class UserDao {
         return userList;
     }
 
-    public int registNewUser() {
+    public int bulkInsertNewUser(List<UserDto> newUserList) {
         PreparedStatement stmt = null;
         int RowsCount = 0;
-        String sql = Util.getSql("insertNewUser");
-
-        UserDto newUser = new UserDto();
-        List<UserDto> newUserList = new ArrayList<UserDto>(); 
+        String sql = Util.getSql("bulkInsertNewUser");
         
-        for (int i = 0; i < 50; i++) {            
-            newUser.setUserName("test" + i);
-            newUser.setEMail("test" + i + "@example.com");
-
-            newUserList.add(newUser);
-        }
-
         try {
             stmt = TransactionManager.get().prepareStatement(sql);
 
             int size = newUserList.size();
 
             for (int i = 0; i < size; i++) {
-                UserDto getUser = newUserList.get(i);
-                stmt.setString(1, getUser.getUserName());
-                stmt.setString(2, getUser.getEMail());
+                UserDto user = newUserList.get(i);
+                stmt.setString(1, user.getUserName());
+                stmt.setString(2, user.getEMail());
                 stmt.executeUpdate();
 
                 // 行カウントをインクリメント

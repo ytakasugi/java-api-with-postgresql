@@ -58,7 +58,7 @@ public class ThreadLocalConnection {
     /**
      * 自動コミットがTrueだった場合、メッセージを出力する
      */
-    public static void set() {
+    public static void validate() {
         Connection conn = threadLocalConnection.get();
         try {
             if (conn.getAutoCommit()) {
@@ -66,6 +66,12 @@ public class ThreadLocalConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void remove(boolean flag) {
+        if (flag) {
+            threadLocalConnection.remove();
         }
     }
 }

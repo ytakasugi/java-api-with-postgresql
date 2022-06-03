@@ -1,17 +1,17 @@
 package jp.co.morgan.server.dto;
 
+import java.sql.Timestamp;
+
 public class UserDto {
     private String userId;
     private String userName;
     private String eMail;
-    private String updated;
+    private Timestamp created;
+    private Timestamp updated;
+    private boolean deleteFlag;
 
     // コンストラクタ
     public UserDto() {
-        userId = null;
-        userName = null;
-        eMail = null;
-        updated = null;
     }
 
     /**
@@ -30,8 +30,16 @@ public class UserDto {
         return eMail;
     }
 
-    public String getUpdated() {
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public Timestamp getUpdated() {
         return updated;
+    }
+
+    public boolean getDeleteFlag() {
+        return deleteFlag;
     }
 
     /**
@@ -50,7 +58,15 @@ public class UserDto {
         this.eMail = eMail;
     }
 
-    public void setUpdated(String updated) {
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
+    public void setUpdated(Timestamp updated) {
         this.updated = updated;
+    }
+
+    public void setDeleteFlag(boolean deleteFlag) {
+        this.deleteFlag = deleteFlag;
     }
 }

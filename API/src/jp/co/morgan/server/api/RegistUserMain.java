@@ -1,20 +1,39 @@
 package jp.co.morgan.server.api;
 
-import jp.co.morgan.server.util.TransactionManager;
+import java.util.List;
+import java.util.ArrayList;
+
 import jp.co.morgan.server.dao.UserDao;
+import jp.co.morgan.server.dto.UserDto;
+import jp.co.morgan.server.util.TransactionManager;
 
 public class RegistUserMain {
     public static void main(String[] args) {
+        UserDto newUser = new UserDto();
+        List<UserDto> newUserList  = new ArrayList<UserDto>();
+
+        for (int i = 0; i < 50; i++) {
+            String name = "test" + String.format("%03d", i);
+            String email = "test" + String.format("%03d", i) + "@example.com";
+
+            newUser.setUserName(name);
+            newUser.setEMail(email);
+
+            newUserList.add(newUser);
+        }
+
         try {
+            // トランザクション開始
             TransactionManager.begin();
-            
+            // UserDaoをオブジェクト化
             UserDao userDao = new UserDao();
-            userDao.registNewUser();
+            // 一括登録を実行
+            userDao.bulkInsertNewUser(newUserList);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            // トランザクション解放
             TransactionManager.end();
         }
-
     }
 }

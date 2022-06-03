@@ -49,6 +49,8 @@ public class TransactionManager {
                 closeConnection(conn);
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                ThreadLocalConnection.remove(true);
             }
         }
     }
