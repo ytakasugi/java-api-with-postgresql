@@ -7,12 +7,12 @@ import jp.co.morgan.server.dao.UserDao;
 import jp.co.morgan.server.dto.UserDto;
 import jp.co.morgan.server.util.TransactionManager;
 
-public class RegistUserMain {
+public class BulkCreateNewUser {
     public static void main(String[] args) {
-        UserDto newUser = new UserDto();
         List<UserDto> newUserList  = new ArrayList<UserDto>();
 
         for (int i = 0; i < 50; i++) {
+            UserDto newUser = new UserDto();
             String name = "test" + String.format("%03d", i);
             String email = "test" + String.format("%03d", i) + "@example.com";
 
