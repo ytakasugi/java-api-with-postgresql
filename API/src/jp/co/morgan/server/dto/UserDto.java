@@ -3,7 +3,7 @@ package jp.co.morgan.server.dto;
 import java.sql.Timestamp;
 
 public class UserDto {
-    private String userId;
+    private int userId;
     private String userName;
     private String eMail;
     private Timestamp created;
@@ -18,7 +18,7 @@ public class UserDto {
      * ゲッター
      * @return
      */
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
@@ -46,7 +46,7 @@ public class UserDto {
      * セッター
      * @param userId
      */
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

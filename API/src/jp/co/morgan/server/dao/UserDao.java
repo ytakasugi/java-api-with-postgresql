@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 
 import jp.co.morgan.server.dto.UserDto;
@@ -28,7 +29,7 @@ public class UserDao {
 
             while(ret.next()) {
                 UserDto user = new UserDto();
-                user.setUserId(ret.getString("user_id"));
+                user.setUserId(ret.getInt("user_id"));
                 user.setUserName(ret.getString("user_name"));
                 user.setEMail(ret.getString("e_mail"));
                 userList.add(user);
@@ -40,6 +41,29 @@ public class UserDao {
             TransactionManager.closeStatement(stmt);
         }
         return userList;
+    }
+
+    public void updateUserInfo(UserDto userDto) {
+        PreparedStatement stmt = null;
+        String sql = Util.getSql("updateUserInfo");
+        long millis = System.currentTimeMillis();
+        Timestamp now = new Timestamp(millis);
+
+
+        try {
+            stmt = TransactionManager.get().prepareStatement(sql);
+
+            stmt.setString(1, userDto.getEMail());
+            stmt.setTimestamp(2, now);
+            stmt.setInt(3, userDto.getUserId());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            TransactionManager.commit();
+            TransactionManager.closeStatement(stmt);
+        }
     }
 
     public int bulkInsertNewUser(List<UserDto> newUserList) {
@@ -65,6 +89,7 @@ public class UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            // トランザクションのコミット
             TransactionManager.commit();
             TransactionManager.closeStatement(stmt);
         }

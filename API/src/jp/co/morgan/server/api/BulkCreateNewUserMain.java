@@ -7,7 +7,7 @@ import jp.co.morgan.server.dao.UserDao;
 import jp.co.morgan.server.dto.UserDto;
 import jp.co.morgan.server.util.TransactionManager;
 
-public class BulkCreateNewUser {
+public class BulkCreateNewUserMain {
     public static void main(String[] args) {
         List<UserDto> newUserList  = new ArrayList<UserDto>();
 
