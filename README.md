@@ -1,5 +1,13 @@
 # java-api-with-postgresql
 
+### ビルド
+
+```
+javac -sourcepath src -d classes src/jp/co/morgan/server/api/*java
+jar cvfm morgan-api.jar META-INF/MANIFEST.MF -C classes .
+jar tvf morgan-api.jar
+```
+
 ## サンプルコード一覧
 
 ```java
