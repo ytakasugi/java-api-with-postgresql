@@ -4,23 +4,28 @@ import jp.co.morgan.server.dao.UserDao;
 import jp.co.morgan.server.dto.UserDto;
 import jp.co.morgan.server.util.TransactionManager;
 
-public class UpdateUserInfoMain {
+public class CreateNewUserMain {
     public static void main(String[] args) {
-        UserDto userDto = new UserDto();
-        userDto.setUserId(351);
-        userDto.setEMail("test049test049@example.com");
+            UserDto newUser = new UserDto();
+
+            newUser.setUserName("admin");
+            newUser.setEMail("admin@example.com");
 
         try {
+            // トランザクション開始
             TransactionManager.begin();
+            // UserDaoをオブジェクト化
             UserDao userDao = new UserDao();
-            userDao.updateUserInfo(userDto);
+            // 一括登録を実行
+            userDao.insertNewUser(newUser);
+            // トランザクションのコミット
             TransactionManager.commit();
         } catch (Exception e) {
             e.printStackTrace();
             TransactionManager.rollback();
         } finally {
+            // トランザクション解放
             TransactionManager.end();
         }
-        
     }
 }

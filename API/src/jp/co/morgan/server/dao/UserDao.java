@@ -26,7 +26,6 @@ public class UserDao {
             stmt = TransactionManager.get().prepareStatement(sql);
             ret = stmt.executeQuery();
             
-
             while(ret.next()) {
                 UserDto user = new UserDto();
                 user.setUserId(ret.getInt("user_id"));
@@ -42,7 +41,7 @@ public class UserDao {
         }
         return userList;
     }
-
+    // ユーザー情報を更新する
     public void updateUserInfo(UserDto userDto) {
         PreparedStatement stmt = null;
         String sql = Util.getSql("updateUserInfo");
@@ -61,15 +60,71 @@ public class UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            TransactionManager.commit();
             TransactionManager.closeStatement(stmt);
         }
     }
 
+    // ユーザー情報を論理削除するメソッド
+    public void LogicalDeleteUser(UserDto userDto) {
+        PreparedStatement stmt = null;
+        String sql = Util.getSql("logicalDeleteUser");
+        long millis = System.currentTimeMillis();
+        Timestamp now = new Timestamp(millis);
+
+        try {
+            stmt = TransactionManager.get().prepareStatement(sql);
+
+            stmt.setTimestamp(1, now);
+            stmt.setInt(2, userDto.getUserId());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            TransactionManager.closeStatement(stmt);
+        }
+    }
+
+    // ユーザー情報を物理削除するメソッド
+    public void DeleteUser(UserDto userDto) {
+        PreparedStatement stmt = null;
+        String sql = Util.getSql("deleteUser");
+
+        try {
+            stmt = TransactionManager.get().prepareStatement(sql);
+
+            stmt.setInt(1, userDto.getUserId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            TransactionManager.closeStatement(stmt);
+        }
+    }
+
+    // ユーザー情報を登録するメソッド
+    public void insertNewUser(UserDto userDto) {
+        PreparedStatement stmt = null;
+        String sql = Util.getSql("insertNewUser");
+
+        try {
+            stmt = TransactionManager.get().prepareStatement(sql);
+
+            stmt.setString(1, userDto.getUserName());
+            stmt.setString(2, userDto.getEMail());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            TransactionManager.closeStatement(stmt);
+        }
+    }
+
+    // ユーザー情報を一括登録するメソッド
     public int bulkInsertNewUser(List<UserDto> newUserList) {
         PreparedStatement stmt = null;
         int RowsCount = 0;
-        String sql = Util.getSql("bulkInsertNewUser");
+        String sql = Util.getSql("insertNewUser");
         
         try {
             stmt = TransactionManager.get().prepareStatement(sql);
@@ -89,8 +144,6 @@ public class UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // トランザクションのコミット
-            TransactionManager.commit();
             TransactionManager.closeStatement(stmt);
         }
         System.out.println(RowsCount + "行作成しました.");

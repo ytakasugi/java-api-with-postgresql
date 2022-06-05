@@ -29,8 +29,11 @@ public class BulkCreateNewUserMain {
             UserDao userDao = new UserDao();
             // 一括登録を実行
             userDao.bulkInsertNewUser(newUserList);
+            // トランザクションのコミット
+            TransactionManager.commit();
         } catch (Exception e) {
             e.printStackTrace();
+            TransactionManager.rollback();
         } finally {
             // トランザクション解放
             TransactionManager.end();
