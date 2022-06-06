@@ -55,7 +55,7 @@ public class Util {
      * ユーザー情報を標準出力する
      * @param ArrayList<UserDto>
      */
-    public static void printUserInfo(ArrayList<UserDto> userList) {
+    public static void printUserInfoList(ArrayList<UserDto> userList) {
         for (int i = 0; i < userList.size(); i++) {
             UserDto userDto = userList.get(i);
             System.out.printf(
