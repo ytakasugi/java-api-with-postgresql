@@ -1,2 +1,2 @@
-Class-Path: morgan-api.jar
+Class-Path: ./morgan-api.jar
 Main-Class: jp.co.morgan.server.api.SearchUserMain
