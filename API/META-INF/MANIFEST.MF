@@ -1,2 +1,1 @@
-Class-Path: ./morgan-api.jar
-Main-Class: jp.co.morgan.server.api.SearchUserMain
+Manifest-Version: 1.0.0

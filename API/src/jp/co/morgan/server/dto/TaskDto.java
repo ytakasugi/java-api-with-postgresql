@@ -1,6 +1,6 @@
 package jp.co.morgan.server.dto;
 
-import java.util.Date;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class TaskDto {
