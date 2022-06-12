@@ -8,7 +8,7 @@ import jp.co.morgan.server.dao.TaskDao;
 import jp.co.morgan.server.dto.TaskDto;
 import jp.co.morgan.server.util.TransactionManager;
 
-public class CreateNewTaskMain {
+public class BulkCreateNewTaskMain {
     public static void main(String[] args) {
         List<TaskDto> newTaskList = new ArrayList<TaskDto>();
 

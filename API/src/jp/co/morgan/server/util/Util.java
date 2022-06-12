@@ -1,12 +1,13 @@
 package jp.co.morgan.server.util;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import jp.co.morgan.server.dto.UserDto;
+import jp.co.morgan.server.dto.TaskDto;
 
 public class Util {
 
@@ -55,7 +56,7 @@ public class Util {
      * ユーザー情報を標準出力する
      * @param ArrayList<UserDto>
      */
-    public static void printUserInfoList(ArrayList<UserDto> userList) {
+    public static void printUserInfoList(List<UserDto> userList) {
         for (int i = 0; i < userList.size(); i++) {
             UserDto userDto = userList.get(i);
             System.out.printf(
@@ -63,6 +64,26 @@ public class Util {
                 userDto.getUserId(), 
                 userDto.getUserName(), 
                 userDto.getEMail()
+            );
+        }
+    }
+
+    /**
+     * タスクを標準出力する
+     * @param List<TaskDto>
+     */
+    public static void printTaskList(List<TaskDto> taskList) {
+        for (int i = 0; i < taskList.size(); i++) {
+            TaskDto taskDto = taskList.get(i);
+            System.out.printf(
+                "%s, %s, %s, %s, %s, %s, %s \n",
+                taskDto.getTaskId(),
+                taskDto.getUserId(),
+                taskDto.getContent(),
+                taskDto.getCreated(),
+                taskDto.getUpdated(),
+                taskDto.getDeadLine(),
+                taskDto.getFinishedFlag()
             );
         }
     }
