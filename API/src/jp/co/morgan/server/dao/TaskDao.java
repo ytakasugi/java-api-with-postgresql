@@ -30,7 +30,7 @@ public class TaskDao {
                 task.setCreated(ret.getTimestamp("created"));
                 task.setUpdated(ret.getTimestamp("updated"));
                 task.setDeadLine(ret.getDate("dead_line"));
-                task.setFinishedFlag(ret.getBoolean("finished_flag"));
+                task.setStatus(ret.getString("status"));
 
                 taskList.add(task);
             }

@@ -83,7 +83,7 @@ public class Util {
                 taskDto.getCreated(),
                 taskDto.getUpdated(),
                 taskDto.getDeadLine(),
-                taskDto.getFinishedFlag()
+                taskDto.getStatus()
             );
         }
     }

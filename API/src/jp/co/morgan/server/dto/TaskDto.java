@@ -10,7 +10,7 @@ public class TaskDto {
     private Timestamp created;
     private Timestamp updated;
     private Date deadLine;
-    private boolean finishedFlag;
+    private String status;
 
     /**
      * コンストラクタ
@@ -61,10 +61,10 @@ public class TaskDto {
     }
     /**
      * 完了フラグ
-     * @return boolean
+     * @return String
      */
-    public boolean getFinishedFlag() {
-        return this.finishedFlag;
+    public String getStatus() {
+        return this.status;
     }
 
     /**
@@ -113,8 +113,8 @@ public class TaskDto {
      * 完了フラグ
      * @param finishedFlag
      */
-    public void setFinishedFlag(boolean finishedFlag) {
-        this.finishedFlag = finishedFlag;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
