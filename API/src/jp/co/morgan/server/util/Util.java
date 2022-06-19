@@ -69,6 +69,19 @@ public class Util {
     }
 
     /**
+     * ユーザー情報を標準出力する
+     * @param UserDto
+     */
+    public static void printUser(UserDto user) {
+        System.out.printf(
+            "%s, %s, %s \n", 
+            user.getUserId(), 
+            user.getUserName(), 
+            user.getEMail()
+        );
+    }
+
+    /**
      * タスクを標準出力する
      * @param List<TaskDto>
      */
@@ -86,5 +99,22 @@ public class Util {
                 taskDto.getStatus()
             );
         }
+    }
+
+    /**
+     * タスクを標準出力する
+     * @param TaskDto
+     */
+    public static void printTask(TaskDto task) {
+        System.out.printf(
+            "%s, %s, %s, %s, %s, %s, %s \n",
+            task.getTaskId(),
+            task.getUserId(),
+            task.getContent(),
+            task.getCreated(),
+            task.getUpdated(),
+            task.getDeadLine(),
+            task.getStatus()
+        );
     }
 }

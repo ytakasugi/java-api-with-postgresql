@@ -12,6 +12,36 @@ import jp.co.morgan.server.util.Util;
 import jp.co.morgan.server.util.TransactionManager;
 
 public class TaskDao {
+    public void getTask(TaskDto taskDto) {
+        PreparedStatement stmt = null;
+        ResultSet ret = null;
+        String sql = Util.getSql("getTask");
+
+        try {
+            stmt = TransactionManager.get().prepareStatement(sql);
+            stmt.setInt(1, taskDto.getTaskId());
+            stmt.setInt(2, taskDto.getUserId());
+            //stmt.setString(3, taskDto.getStatus());
+            ret = stmt.executeQuery();
+            
+            while(ret.next()) {
+                taskDto.setTaskId(ret.getInt("task_id"));
+                taskDto.setUserId(ret.getInt("user_id"));
+                taskDto.setContent(ret.getString("content"));
+                taskDto.setCreated(ret.getTimestamp("created"));
+                taskDto.setUpdated(ret.getTimestamp("updated"));
+                taskDto.setDeadLine(ret.getDate("dead_line"));
+                taskDto.setStatus(ret.getString("status"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            TransactionManager.closeResultSet(ret);
+            TransactionManager.closeStatement(stmt);
+        }
+    }
+
+    
     public List<TaskDto> getAllTask() {
         PreparedStatement stmt = null;
         ResultSet ret = null;

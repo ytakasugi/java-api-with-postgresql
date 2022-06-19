@@ -2,13 +2,13 @@ package jp.co.morgan.server.constants;
 
 public enum StatusCode {
     // 未処理
-    StatusCode0("0"),
+    Code0("0"),
     // 処理中
-    StatusCode1("1"),
+    Code1("1"),
     // 完了
-    StatusCode2("2"),
+    Code2("2"),
     // フィードバック
-    StatusCode9("9");
+    Code9("9");
 
     private final String status;
     /**
