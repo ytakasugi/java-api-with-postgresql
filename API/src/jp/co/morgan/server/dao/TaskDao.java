@@ -9,21 +9,32 @@ import java.sql.PreparedStatement;
 
 import jp.co.morgan.server.dto.TaskDto;
 import jp.co.morgan.server.util.Util;
+import jp.co.morgan.server.util.DBUtil;
+import jp.co.morgan.server.constants.StatusCode;
 import jp.co.morgan.server.util.TransactionManager;
 
 public class TaskDao {
     public void getTask(TaskDto taskDto) {
-        PreparedStatement stmt = null;
-        ResultSet ret = null;
+        //PreparedStatement stmt = null;
+        //ResultSet ret = null;
         String sql = Util.getSql("getTask");
-
+        List<Object> paramList = new ArrayList<Object>();
+        paramList.add(1);
+        paramList.add(452);
+        paramList.add(StatusCode.Code0.getCodeValue()); 
+        DBUtil.executeQuery(sql, paramList);
         try {
+            paramList.add(taskDto.getTaskId());
+            paramList.add(taskDto.getUserId());
+            paramList.add(StatusCode.Code0.getCodeValue()); 
+            DBUtil.executeQuery(sql, paramList);
+            /*
             stmt = TransactionManager.get().prepareStatement(sql);
             stmt.setInt(1, taskDto.getTaskId());
             stmt.setInt(2, taskDto.getUserId());
-            //stmt.setString(3, taskDto.getStatus());
+            stmt.setString(3, taskDto.getStatus());
             ret = stmt.executeQuery();
-            
+
             while(ret.next()) {
                 taskDto.setTaskId(ret.getInt("task_id"));
                 taskDto.setUserId(ret.getInt("user_id"));
@@ -33,11 +44,12 @@ public class TaskDao {
                 taskDto.setDeadLine(ret.getDate("dead_line"));
                 taskDto.setStatus(ret.getString("status"));
             }
-        } catch (SQLException e) {
+            */
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            TransactionManager.closeResultSet(ret);
-            TransactionManager.closeStatement(stmt);
+            //TransactionManager.closeResultSet(ret);
+            //TransactionManager.closeStatement(stmt);
         }
     }
 
