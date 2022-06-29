@@ -15,7 +15,7 @@ public class SearchUserMain {
             
             UserDao userDao = new UserDao();
             List<UserDto> userList = userDao.getAllUserInfo();
-            Util.printUserInfoList(userList);
+            Util.printUserList(userList);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -7,7 +7,7 @@ import jp.co.morgan.server.util.Util;
 import jp.co.morgan.server.constants.StatusCode;
 
 public class getTaskMain {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         TaskDto taskDto = new TaskDto();
         taskDto.setTaskId(1);
         taskDto.setUserId(452);
@@ -16,10 +16,9 @@ public class getTaskMain {
         try {
             TransactionManager.begin();
             TaskDao taskDao = new TaskDao();
-            taskDao.getTask(taskDto);
-            Util.printTask(taskDto);
+            Util.printTask(taskDao.getTask(taskDto));
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception();
         } finally {
             TransactionManager.end();
         }

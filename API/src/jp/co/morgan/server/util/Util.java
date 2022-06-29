@@ -1,13 +1,13 @@
 package jp.co.morgan.server.util;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import jp.co.morgan.server.dto.UserDto;
-import jp.co.morgan.server.dto.TaskDto;
 
 public class Util {
 
@@ -56,7 +56,7 @@ public class Util {
      * ユーザー情報を標準出力する
      * @param ArrayList<UserDto>
      */
-    public static void printUserInfoList(List<UserDto> userList) {
+    public static void printUserList(List<UserDto> userList) {
         for (int i = 0; i < userList.size(); i++) {
             UserDto userDto = userList.get(i);
             System.out.printf(
@@ -83,38 +83,20 @@ public class Util {
 
     /**
      * タスクを標準出力する
-     * @param List<TaskDto>
+     * @param List<Map<String, Object>>
      */
-    public static void printTaskList(List<TaskDto> taskList) {
-        for (int i = 0; i < taskList.size(); i++) {
-            TaskDto taskDto = taskList.get(i);
+    public static void printTask(List<Map<String, Object>> task) {
+        for (int i = 0; i < task.size(); i++) {
             System.out.printf(
                 "%s, %s, %s, %s, %s, %s, %s \n",
-                taskDto.getTaskId(),
-                taskDto.getUserId(),
-                taskDto.getContent(),
-                taskDto.getCreated(),
-                taskDto.getUpdated(),
-                taskDto.getDeadLine(),
-                taskDto.getStatus()
+                task.get(i).get("task_id"),
+                task.get(i).get("user_id"),
+                task.get(i).get("content"),
+                task.get(i).get("created"),
+                task.get(i).get("updated"),
+                task.get(i).get("dead_line"),
+                task.get(i).get("status")
             );
         }
-    }
-
-    /**
-     * タスクを標準出力する
-     * @param TaskDto
-     */
-    public static void printTask(TaskDto task) {
-        System.out.printf(
-            "%s, %s, %s, %s, %s, %s, %s \n",
-            task.getTaskId(),
-            task.getUserId(),
-            task.getContent(),
-            task.getCreated(),
-            task.getUpdated(),
-            task.getDeadLine(),
-            task.getStatus()
-        );
     }
 }

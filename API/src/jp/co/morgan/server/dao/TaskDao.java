@@ -2,87 +2,44 @@ package jp.co.morgan.server.dao;
 
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Map;
 import java.sql.SQLException;
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
 import jp.co.morgan.server.dto.TaskDto;
 import jp.co.morgan.server.util.Util;
 import jp.co.morgan.server.util.DBUtil;
-import jp.co.morgan.server.constants.StatusCode;
 import jp.co.morgan.server.util.TransactionManager;
 
 public class TaskDao {
-    public void getTask(TaskDto taskDto) {
-        //PreparedStatement stmt = null;
-        //ResultSet ret = null;
+    public List<Map<String, Object>> getTask(TaskDto taskDto) throws Exception {
         String sql = Util.getSql("getTask");
         List<Object> paramList = new ArrayList<Object>();
-        paramList.add(1);
-        paramList.add(452);
-        paramList.add(StatusCode.Code0.getCodeValue()); 
-        DBUtil.executeQuery(sql, paramList);
+        List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         try {
             paramList.add(taskDto.getTaskId());
             paramList.add(taskDto.getUserId());
-            paramList.add(StatusCode.Code0.getCodeValue()); 
-            DBUtil.executeQuery(sql, paramList);
-            /*
-            stmt = TransactionManager.get().prepareStatement(sql);
-            stmt.setInt(1, taskDto.getTaskId());
-            stmt.setInt(2, taskDto.getUserId());
-            stmt.setString(3, taskDto.getStatus());
-            ret = stmt.executeQuery();
+            paramList.add(taskDto.getStatus()); 
 
-            while(ret.next()) {
-                taskDto.setTaskId(ret.getInt("task_id"));
-                taskDto.setUserId(ret.getInt("user_id"));
-                taskDto.setContent(ret.getString("content"));
-                taskDto.setCreated(ret.getTimestamp("created"));
-                taskDto.setUpdated(ret.getTimestamp("updated"));
-                taskDto.setDeadLine(ret.getDate("dead_line"));
-                taskDto.setStatus(ret.getString("status"));
-            }
-            */
+            resultList = DBUtil.executeQuery(sql, paramList);
+
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //TransactionManager.closeResultSet(ret);
-            //TransactionManager.closeStatement(stmt);
+            throw new Exception();
         }
+        return resultList;
     }
 
     
-    public List<TaskDto> getAllTask() {
-        PreparedStatement stmt = null;
-        ResultSet ret = null;
-        List<TaskDto> taskList = new ArrayList<TaskDto>();
+    public List<Map<String, Object>> getAllTask() throws Exception {
         String sql = Util.getSql("getAllTask");
-
+        List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+        
         try {
-            stmt = TransactionManager.get().prepareStatement(sql);
-            ret = stmt.executeQuery();
-
-            while(ret.next()) {
-                TaskDto task = new TaskDto();
-                task.setTaskId(ret.getInt("task_id"));
-                task.setUserId(ret.getInt("user_id"));
-                task.setContent(ret.getString("content"));
-                task.setCreated(ret.getTimestamp("created"));
-                task.setUpdated(ret.getTimestamp("updated"));
-                task.setDeadLine(ret.getDate("dead_line"));
-                task.setStatus(ret.getString("status"));
-
-                taskList.add(task);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            TransactionManager.closeResultSet(ret);
-            TransactionManager.closeStatement(stmt);
+            resultList = DBUtil.executeQueryNoParam(sql);
+        } catch (Exception e) {
+            throw new Exception();
         }
-        return taskList;
+        return resultList;
     }
 
     public void insertTask(TaskDto taskDto) {
