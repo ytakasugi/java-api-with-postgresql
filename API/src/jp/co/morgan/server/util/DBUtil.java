@@ -23,7 +23,7 @@ public class DBUtil {
      * @return PreparedStatement
      * @throws SQLException
      */
-    public static PreparedStatement setSqlPram(String sql, List<Object> paramList) throws SQLException {
+    private static PreparedStatement setSqlPram(String sql, List<Object> paramList) throws SQLException {
         PreparedStatement ps = TransactionManager.get().prepareStatement(sql);
         if (null == paramList) {
             return ps;
@@ -33,6 +33,18 @@ public class DBUtil {
             ps.setObject(index, param);
             index = index + 1;
         }
+        return ps;
+    }
+
+    /**
+     * PreparedStatementを作成する
+     * @param sql
+     * @return PreparedStatement
+     * @throws SQLException
+     */
+    private static PreparedStatement setSql(String sql) throws SQLException {
+        PreparedStatement ps = TransactionManager.get().prepareStatement(sql);
+        
         return ps;
     }
 
@@ -83,7 +95,7 @@ public class DBUtil {
         PreparedStatement ps = null;
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         try {
-            ps = TransactionManager.get().prepareStatement(sql);
+            ps = setSql(sql);
             rs = ps.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
             int count = rsmd.getColumnCount();
@@ -105,6 +117,24 @@ public class DBUtil {
             throw new RuntimeException();
         } finally {
             TransactionManager.closeResultSet(rs);
+            TransactionManager.closeStatement(ps);
+        }
+    }
+
+    /**
+     * SQLを実行する。
+     * @param sql 実行するSQL
+     * @param params 設定するパラメーター
+     * @return 実行結果
+     */
+    public int executeUpdate(String sql, List<Object> params) {
+        PreparedStatement ps = null;
+        try {
+            ps = setSqlPram(sql, params);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(sql, e);
+        } finally {
             TransactionManager.closeStatement(ps);
         }
     }
