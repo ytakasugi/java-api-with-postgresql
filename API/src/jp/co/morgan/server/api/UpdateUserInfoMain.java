@@ -7,7 +7,7 @@ import jp.co.morgan.server.util.TransactionManager;
 public class UpdateUserInfoMain {
     public static void main(String[] args) {
         UserDto userDto = new UserDto();
-        userDto.setUserId(351);
+        userDto.setUserId(360);
         userDto.setEMail("test049test049@example.com");
 
         try {

@@ -30,9 +30,8 @@ public class UserDao {
     public void updateUserInfo(UserDto userDto) throws Exception {
         String sql = Util.getSql("updateUserInfo");
         List<Object> paramList = new ArrayList<Object>();
-        long millis = System.currentTimeMillis();
-        Timestamp now = new Timestamp(millis);
-
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+    
         try {
             paramList.add(userDto.getEMail());
             paramList.add(now);
@@ -47,8 +46,7 @@ public class UserDao {
     public void LogicalDeleteUser(UserDto userDto) throws Exception {
         String sql = Util.getSql("logicalDeleteUser");
         List<Object> paramList = new ArrayList<Object>();
-        long millis = System.currentTimeMillis();
-        Timestamp now = new Timestamp(millis);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
 
         try {
             paramList.add(now);
