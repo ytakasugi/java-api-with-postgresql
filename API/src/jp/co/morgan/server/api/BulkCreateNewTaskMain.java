@@ -16,7 +16,7 @@ public class BulkCreateNewTaskMain {
             TaskDto newTask = new TaskDto();
             int userId = 452;
             String content = "new task no." + String.format("%03d", i);
-            Date deadLine = Date.valueOf("2022-06-08");
+            Date deadLine = Date.valueOf("2022-06-30");
 
             newTask.setUserId(userId);
             newTask.setContent(content);
@@ -25,11 +25,16 @@ public class BulkCreateNewTaskMain {
             newTaskList.add(newTask);
         }
 
+        int size = newTaskList.size();
+
         try {
             TransactionManager.begin();
             TaskDao taskDao = new TaskDao();
-            taskDao.bulkInsertTask(newTaskList);
-            TransactionManager.commit();
+            
+            for (int i = 0; i < size; i++) {
+                taskDao.insertTask(newTaskList.get(i));
+                TransactionManager.commit();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             TransactionManager.rollback();

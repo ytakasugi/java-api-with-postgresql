@@ -72,13 +72,15 @@ public class Util {
      * ユーザー情報を標準出力する
      * @param UserDto
      */
-    public static void printUser(UserDto user) {
-        System.out.printf(
-            "%s, %s, %s \n", 
-            user.getUserId(), 
-            user.getUserName(), 
-            user.getEMail()
-        );
+    public static void printUser(List<Map<String, Object>> user) {
+        for (int i = 0; i < user.size(); i++) {
+            System.out.printf(
+             "%s, %s, %s \n", 
+                user.get(i).get("user_id"),
+                user.get(i).get("user_name"),
+                user.get(i).get("e_mail")
+            );
+        }
     }
 
     /**

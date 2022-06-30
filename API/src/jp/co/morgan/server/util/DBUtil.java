@@ -127,10 +127,10 @@ public class DBUtil {
      * @param params 設定するパラメーター
      * @return 実行結果
      */
-    public int executeUpdate(String sql, List<Object> params) {
+    public static int executeUpdate(String sql, List<Object> paramList) {
         PreparedStatement ps = null;
         try {
-            ps = setSqlPram(sql, params);
+            ps = setSqlPram(sql, paramList);
             return ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(sql, e);
