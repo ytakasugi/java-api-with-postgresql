@@ -22,15 +22,17 @@ public class BulkCreateNewUserMain {
             newUserList.add(newUser);
         }
 
+        int size = newUserList.size();
+
         try {
             // トランザクション開始
             TransactionManager.begin();
             // UserDaoをオブジェクト化
             UserDao userDao = new UserDao();
-            // 一括登録を実行
-            userDao.bulkInsertNewUser(newUserList);
-            // トランザクションのコミット
-            TransactionManager.commit();
+            for (int i = 0; i < size; i++) {
+                userDao.insertNewUser(newUserList.get(i));
+                TransactionManager.commit();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             TransactionManager.rollback();

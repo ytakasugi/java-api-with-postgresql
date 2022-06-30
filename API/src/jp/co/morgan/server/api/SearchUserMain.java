@@ -1,10 +1,7 @@
 package jp.co.morgan.server.api;
 
-import java.util.List;
-
 import jp.co.morgan.server.util.Util;
 import jp.co.morgan.server.util.TransactionManager;
-import jp.co.morgan.server.dto.UserDto;
 import jp.co.morgan.server.dao.UserDao;
 
 
@@ -14,8 +11,7 @@ public class SearchUserMain {
             TransactionManager.begin();
             
             UserDao userDao = new UserDao();
-            List<UserDto> userList = userDao.getAllUserInfo();
-            Util.printUserList(userList);
+            Util.printUser(userDao.getAllUserInfo());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
