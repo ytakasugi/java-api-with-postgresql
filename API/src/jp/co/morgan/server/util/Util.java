@@ -7,8 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import jp.co.morgan.server.dto.UserDto;
-
 public class Util {
 
     private static final String COMMON_PROP_PATH = "/workspace/common.properties";
@@ -50,22 +48,6 @@ public class Util {
             e.printStackTrace();
         }
         return prop.getProperty(key);
-    }
-
-    /**
-     * ユーザー情報を標準出力する
-     * @param ArrayList<UserDto>
-     */
-    public static void printUserList(List<UserDto> userList) {
-        for (int i = 0; i < userList.size(); i++) {
-            UserDto userDto = userList.get(i);
-            System.out.printf(
-                "%s, %s, %s \n", 
-                userDto.getUserId(), 
-                userDto.getUserName(), 
-                userDto.getEMail()
-            );
-        }
     }
 
     /**
