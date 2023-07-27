@@ -5,15 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ThreadLocalConnection {
-    private static final ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<Connection>() {
-        protected synchronized Connection initialValue() {
-            try {
-                return getConnection();
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    };
+    private static Connection conn;
+    private static ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<>();
 
     /**
      * コンストラクタ
@@ -21,12 +14,7 @@ public class ThreadLocalConnection {
     private ThreadLocalConnection() {
     }
 
-    /**
-     * コネクションを作成する
-     * @return Connection
-     */
-    private static Connection getConnection() {
-        Connection conn = null;
+    static {
         try {
             Class.forName(Util.getProp("db.driver"));
             conn = DriverManager.getConnection(
@@ -38,7 +26,14 @@ public class ThreadLocalConnection {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
+    }
+
+    /**
+     * コネクションを取得する
+     * @return Connection
+     */
+    public static Connection getConnection() {
         return conn;
     }
 

@@ -232,3 +232,75 @@ public class DbAccess {
     }
 }
 ```
+
+## HikariCPを使用したコネクション作成
+
+```java
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+public class TransactionManager {
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database";
+    private static final String USERNAME = "your_username";
+    private static final String PASSWORD = "your_password";
+
+    private static HikariDataSource dataSource;
+    private ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<>();
+
+    static {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(JDBC_URL);
+        config.setUsername(USERNAME);
+        config.setPassword(PASSWORD);
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    public Connection getConnection() throws SQLException {
+        Connection connection = threadLocalConnection.get();
+        if (connection == null || connection.isClosed()) {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            threadLocalConnection.set(connection);
+        }
+        return connection;
+    }
+
+    public void commitTransaction() throws SQLException {
+        Connection connection = threadLocalConnection.get();
+        if (connection != null) {
+            connection.commit();
+            connection.setAutoCommit(true);
+        }
+    }
+
+    public void rollbackTransaction() throws SQLException {
+        Connection connection = threadLocalConnection.get();
+        if (connection != null) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+        }
+    }
+
+    public void closeConnection() {
+        Connection connection = threadLocalConnection.get();
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            threadLocalConnection.remove();
+        }
+    }
+
+    public void closeDataSource() {
+        if (dataSource != null) {
+            dataSource.close();
+        }
+    }
+}
+```
