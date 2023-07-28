@@ -6,6 +6,7 @@
 javac -sourcepath src -d classes src/jp/co/morgan/server/*/*java
 jar cvfm morgan-api.jar META-INF/MANIFEST.MF -C classes . lib/postgresql-42.3.5.jar /workspace/common.properties /workspace/sql.properties
 jar tvf morgan-api.jar
+java -cp morgan-api.jar:lib/postgresql-42.3.5.jar jp.co.morgan.server.api.SearchUserMain
 ```
 
 ## サンプルコード一覧
