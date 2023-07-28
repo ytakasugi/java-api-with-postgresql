@@ -1,1 +1,2 @@
 Manifest-Version: 1.0.0
+Class-Path: lib/postgresql-42.3.5.jar /workspace/common.properties /workspace/sql.properties

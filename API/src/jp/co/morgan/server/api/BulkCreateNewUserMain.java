@@ -1,14 +1,16 @@
 package jp.co.morgan.server.api;
 
 import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import jp.co.morgan.server.dao.UserDao;
 import jp.co.morgan.server.dto.UserDto;
-import jp.co.morgan.server.util.TransactionManager;
+import jp.co.morgan.server.util.ConnectionManager;
 
 public class BulkCreateNewUserMain {
     public static void main(String[] args) {
+        Connection connection = null;
         List<UserDto> newUserList  = new ArrayList<UserDto>();
 
         for (int i = 0; i < 50; i++) {
@@ -25,20 +27,19 @@ public class BulkCreateNewUserMain {
         int size = newUserList.size();
 
         try {
-            // トランザクション開始
-            TransactionManager.begin();
+            connection = ConnectionManager.getConnection();
             // UserDaoをオブジェクト化
             UserDao userDao = new UserDao();
             for (int i = 0; i < size; i++) {
-                userDao.insertNewUser(newUserList.get(i));
-                TransactionManager.commit();
+                userDao.insertNewUser(connection, newUserList.get(i));
+                ConnectionManager.commit(connection);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            TransactionManager.rollback();
+            ConnectionManager.rollback(connection);
         } finally {
             // トランザクション解放
-            TransactionManager.end();
+            ConnectionManager.end(connection);
         }
     }
 }

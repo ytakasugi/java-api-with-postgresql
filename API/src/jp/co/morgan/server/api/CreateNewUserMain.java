@@ -1,31 +1,33 @@
 package jp.co.morgan.server.api;
 
+import java.sql.Connection;
+
 import jp.co.morgan.server.dao.UserDao;
 import jp.co.morgan.server.dto.UserDto;
-import jp.co.morgan.server.util.TransactionManager;
+import jp.co.morgan.server.util.ConnectionManager;
 
 public class CreateNewUserMain {
     public static void main(String[] args) {
-            UserDto newUser = new UserDto();
+        Connection connection = null;
+        UserDto newUser = new UserDto();
 
-            newUser.setUserName("admin");
-            newUser.setEMail("admin@example.com");
+        newUser.setUserName("admin");
+        newUser.setEMail("admin@example.com");
 
         try {
-            // トランザクション開始
-            TransactionManager.begin();
+            connection = ConnectionManager.getConnection();
             // UserDaoをオブジェクト化
             UserDao userDao = new UserDao();
             // 一括登録を実行
-            userDao.insertNewUser(newUser);
+            userDao.insertNewUser(connection, newUser);
             // トランザクションのコミット
-            TransactionManager.commit();
+            ConnectionManager.commit(connection);
         } catch (Exception e) {
             e.printStackTrace();
-            TransactionManager.rollback();
+            ConnectionManager.rollback(connection);
         } finally {
             // トランザクション解放
-            TransactionManager.end();
+            ConnectionManager.end(connection);
         }
     }
 }

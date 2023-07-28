@@ -1,6 +1,7 @@
 package jp.co.morgan.server.dao;
 
 import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ import jp.co.morgan.server.util.Util;
 import jp.co.morgan.server.util.DBUtil;
 
 public class TaskDao {
-    public List<Map<String, Object>> getTask(TaskDto taskDto) throws Exception {
+    public List<Map<String, Object>> getTask(Connection connection, TaskDto taskDto) throws Exception {
         String sql = Util.getSql("getTask");
         List<Object> paramList = new ArrayList<Object>();
         List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
@@ -18,7 +19,7 @@ public class TaskDao {
             paramList.add(taskDto.getUserId());
             paramList.add(taskDto.getStatus()); 
 
-            resultList = DBUtil.executeQuery(sql, paramList);
+            resultList = DBUtil.executeQuery(connection, sql, paramList);
 
         } catch (Exception e) {
             throw new Exception();
@@ -27,18 +28,18 @@ public class TaskDao {
     }
 
     
-    public List<Map<String, Object>> getAllTask() throws Exception {
+    public List<Map<String, Object>> getAllTask(Connection connection) throws Exception {
         String sql = Util.getSql("getAllTask");
         List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
         try {
-            resultList = DBUtil.executeQueryNoParam(sql);
+            resultList = DBUtil.executeQueryNoParam(connection, sql);
         } catch (Exception e) {
             throw new Exception();
         }
         return resultList;
     }
 
-    public void insertTask(TaskDto taskDto) throws Exception {
+    public void insertTask(Connection connection, TaskDto taskDto) throws Exception {
         String sql = Util.getSql("insertTask");
         List<Object> paramList = new ArrayList<Object>();
         try {
@@ -46,7 +47,7 @@ public class TaskDao {
             paramList.add(taskDto.getContent());
             paramList.add(taskDto.getDeadLine());
 
-            DBUtil.executeUpdate(sql, paramList);
+            DBUtil.executeUpdate(connection, sql, paramList);
         } catch (Exception e) {
             throw new Exception();
         } 

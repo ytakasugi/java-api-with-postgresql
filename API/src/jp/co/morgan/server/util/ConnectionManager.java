@@ -1,56 +1,85 @@
 package jp.co.morgan.server.util;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * DB関係のクラスメソッドを定義する
- */
-public class TransactionManager {
-    /**
-     * コンストラクタ
-     */
-    private TransactionManager() {
-    }
+public class ConnectionManager {
+    private static ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<>();
 
-    /**
-     * トランザクションを開始する
-     */
-    public static void begin() {
-        // コネクションを取得する
-        Connection conn = ThreadLocalConnection.get();
-        if (conn != null) {
-            try {
-                conn.setAutoCommit(false);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    static {
+        try {
+            Class.forName(Util.getProp("db.driver"));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
     /**
-     * トランザクションを取得する
+     * コンストラクタ
+     */
+    private ConnectionManager() {
+    }
+
+    /**
+     * コネクションを取得・作成する
      * @return Connection
      */
-    public static Connection get() {
-        return ThreadLocalConnection.get();
+    public static Connection getConnection() {
+        Connection conn = threadLocalConnection.get();
+
+        if (conn == null) {
+            try {
+                conn = DriverManager.getConnection(
+                    Util.getProp("db.url"), 
+                    Util.getProp("db.user"),
+                    Util.getProp("db.password")
+                );
+                conn.setAutoCommit(false);
+                threadLocalConnection.set(conn);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return conn;
+    }
+
+    /**
+     * 自動コミットがTrueだった場合、メッセージを出力する
+     */
+    public static void validate(Connection conn) {
+        try {
+            if (conn.getAutoCommit()) {
+                System.out.println("Auto Commit is True");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ThreadLocalからスレッドを削除する
+     * @param flag
+     */
+    private static void remove(boolean flag) {
+        if (flag) {
+            threadLocalConnection.remove();
+        }
     }
 
     /**
      * トランザクションを終了する
      */
-    public static void end() {
-        // コネクションを取得する
-        Connection conn = ThreadLocalConnection.get();
+    public static void end(Connection conn) {
         if (conn != null) {
             try {
                 closeConnection(conn);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                ThreadLocalConnection.remove(true);
+                remove(true);
             }
         }
     }
@@ -58,8 +87,7 @@ public class TransactionManager {
     /**
      * コミット
      */
-    public static void commit() {
-        Connection conn = ThreadLocalConnection.get();
+    public static void commit(Connection conn) {
         if (conn != null) {
             try {
                 conn.commit();
@@ -72,8 +100,7 @@ public class TransactionManager {
     /**
      * ロールバック
      */
-    public static void rollback() {
-        Connection conn = ThreadLocalConnection.get();
+    public static void rollback(Connection conn) {
         if (conn != null) {
             try {
                 conn.rollback();

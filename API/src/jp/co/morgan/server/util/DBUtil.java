@@ -1,5 +1,6 @@
 package jp.co.morgan.server.util;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -23,8 +24,8 @@ public class DBUtil {
      * @return PreparedStatement
      * @throws SQLException
      */
-    private static PreparedStatement setSqlPram(String sql, List<Object> paramList) throws SQLException {
-        PreparedStatement ps = TransactionManager.get().prepareStatement(sql);
+    private static PreparedStatement setSqlPram(Connection connection, String sql, List<Object> paramList) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(sql);
         if (null == paramList) {
             return ps;
         }
@@ -42,8 +43,8 @@ public class DBUtil {
      * @return PreparedStatement
      * @throws SQLException
      */
-    private static PreparedStatement setSql(String sql) throws SQLException {
-        PreparedStatement ps = TransactionManager.get().prepareStatement(sql);
+    private static PreparedStatement setSql(Connection connection, String sql) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(sql);
         
         return ps;
     }
@@ -54,12 +55,12 @@ public class DBUtil {
      * @param paramList 設定するパラメーター
      * @return 実行結果
      */
-    public static List<Map<String, Object>> executeQuery(String sql, List<Object> paramList) {
+    public static List<Map<String, Object>> executeQuery(Connection connection, String sql, List<Object> paramList) {
         ResultSet rs = null;
         PreparedStatement ps = null;
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         try {
-            ps = setSqlPram(sql, paramList);
+            ps = setSqlPram(connection, sql, paramList);
             rs = ps.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
             int count = rsmd.getColumnCount();
@@ -80,8 +81,8 @@ public class DBUtil {
         } catch (SQLException e) {
             throw new RuntimeException();
         } finally {
-            TransactionManager.closeResultSet(rs);
-            TransactionManager.closeStatement(ps);
+            ConnectionManager.closeResultSet(rs);
+            ConnectionManager.closeStatement(ps);
         }
     }
 
@@ -90,12 +91,12 @@ public class DBUtil {
      * @param sql 実行するSQL
      * @return 実行結果
      */
-    public static List<Map<String, Object>> executeQueryNoParam(String sql) {
+    public static List<Map<String, Object>> executeQueryNoParam(Connection connection, String sql) {
         ResultSet rs = null;
         PreparedStatement ps = null;
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         try {
-            ps = setSql(sql);
+            ps = setSql(connection, sql);
             rs = ps.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
             int count = rsmd.getColumnCount();
@@ -116,8 +117,8 @@ public class DBUtil {
         } catch (SQLException e) {
             throw new RuntimeException();
         } finally {
-            TransactionManager.closeResultSet(rs);
-            TransactionManager.closeStatement(ps);
+            ConnectionManager.closeResultSet(rs);
+            ConnectionManager.closeStatement(ps);
         }
     }
 
@@ -127,15 +128,15 @@ public class DBUtil {
      * @param params 設定するパラメーター
      * @return 実行結果
      */
-    public static int executeUpdate(String sql, List<Object> paramList) {
+    public static int executeUpdate(Connection connection, String sql, List<Object> paramList) {
         PreparedStatement ps = null;
         try {
-            ps = setSqlPram(sql, paramList);
+            ps = setSqlPram(connection, sql, paramList);
             return ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(sql, e);
         } finally {
-            TransactionManager.closeStatement(ps);
+            ConnectionManager.closeStatement(ps);
         }
     }
 }

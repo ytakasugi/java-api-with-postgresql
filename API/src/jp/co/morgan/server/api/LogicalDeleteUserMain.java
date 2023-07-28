@@ -1,24 +1,27 @@
 package jp.co.morgan.server.api;
 
+import java.sql.Connection;
+
 import jp.co.morgan.server.dao.UserDao;
 import jp.co.morgan.server.dto.UserDto;
-import jp.co.morgan.server.util.TransactionManager;
+import jp.co.morgan.server.util.ConnectionManager;
 
 public class LogicalDeleteUserMain {
     public static void main(String[] args) {
+        Connection connection = null;
         UserDto userDto = new UserDto();
         userDto.setUserId(351);
 
         try {
-            TransactionManager.begin();
+            connection = ConnectionManager.getConnection();
             UserDao userDao = new UserDao();
-            userDao.LogicalDeleteUser(userDto);
-            TransactionManager.commit();
+            userDao.LogicalDeleteUser(connection, userDto);
+            ConnectionManager.commit(connection);
         } catch (Exception e) {
             e.printStackTrace();
-            TransactionManager.rollback();
+            ConnectionManager.rollback(connection);
         } finally {
-            TransactionManager.end();
+            ConnectionManager.end(connection);
         }
     }
 }
